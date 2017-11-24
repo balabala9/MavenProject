@@ -41,6 +41,14 @@ public class StringUtil {
         }
     }
 
+    public static boolean isBlankOrEmpty(String str){
+        if(str.equals(Commonst.BLANK) || str==null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     //科学计数法转字符串
     public static String scientificToString(String str){
         if(str==null || str.equals(Commonst.BLANK)){

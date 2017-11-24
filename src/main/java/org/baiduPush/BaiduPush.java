@@ -9,8 +9,11 @@ import com.baidu.yun.push.constants.BaiduPushConstants;
 import com.baidu.yun.push.exception.PushClientException;
 import com.baidu.yun.push.exception.PushServerException;
 import com.baidu.yun.push.model.PushMsgToAllRequest;
+import com.baidu.yun.push.model.PushMsgToAllResponse;
 import com.baidu.yun.push.model.PushMsgToSingleDeviceRequest;
 import com.baidu.yun.push.model.PushMsgToSingleDeviceResponse;
+import org.Commonst;
+import org.String.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,7 +97,7 @@ public class BaiduPush {
     }
 
     //推送消息给所有设备 ifFixedSend 1定时 0立即
-    public void pushMsgToAll(String msgType,String msg,String msgExpires,String deviceType,String isFixedSend,String sendTime){
+    public void pushMsgToAll(String msgType,String msg,String msgExpires,String deviceType,String isFixedSend,String sendTime) throws Exception {
         //用于接收分配给开发者app的apiKey 和 secretKey
         PushKeyPair pushKeyPair = new PushKeyPair(apiKey, secretKey);
         //该类提供了所有的面向用户使用的接口
@@ -120,10 +123,24 @@ public class BaiduPush {
                 //设备类型 3：Android，4：IOS
                 .addDeviceType(new Integer(deviceType));
 
+        //定时
+        if(isFixedSend.equals(Commonst.ONE)){
+            if(!StringUtil.isBlankOrEmpty(sendTime)){
+                request.addSendTime(Long.parseLong(sendTime));
+            }else {
+                throw new Exception("sendTime is not Empty");
+            }
+        }
 
+        //
+        if(deviceType=="3"){
+            request.addDepolyStatus(null);
+        }else if (deviceType=="4"){
+            request.addDepolyStatus(1);
+        }
 
-
-
+        // 5. http request
+        PushMsgToAllResponse response = baiduPushClient.pushMsgToAll(request);
 
     }
     public static void main(String[] args) throws PushServerException {
