@@ -1,0 +1,74 @@
+scala基本类型
+   基本类型
+       Scala的基本数据类型与Java中的基本数据类型是一一对应的，不同的是Scala的基本数据类型头字母必须大写
+       四种整数类型(Byte、Short、Int、Long)，两种浮点数类型(Float、Double)，一种字符类型(Char)，一种布尔类型(Boolean)，一种字符串类型（String）
+           Byte -128~127
+           Short -32768 ~ 32767
+           Int -2^31-1~2^31  （21 亿）
+           Long 64 位
+
+   基本类型定义
+       整数类型变量
+       浮点类型变量
+         输入浮点数，编译器会将其自动推断为Double类型
+         要定义Float类型浮点数，需要在浮点数后面加F或f
+       字符变量
+       字符串变量
+         原样输出字符串中的内容，则用三个引号"""将字符串包裹起来
+         要定义"Hello World"，可以加入转义符\
+
+   基本类型操作（在Scala中一切操作皆方法，这意味着Scala中的一切皆为对象）
+       算术操作
+          var sumVlaue=1+2 //整数求和，编译器会将其转换为(1).+(2)执行
+       关系运算
+         对象比较：Scala基于内容比较，而java中比较的是引用，进行内容比较时须定义比较方法
+       逻辑运算
+       位运算
+   Scala程序控制结构
+       if 的使用
+         val x= if("hello"=="hell")  1 else 0
+       while和do while的使用  与if不同的是，while与do while不能用作表达式，也即其返回值为Unit
+       for循环的使用
+          //集合操作方式
+          scala> for (file <- filesHere) // <-被称生成器（generator），在执行过程中，集合filesHere中（Array[File])的元素将依次赋给file，file类型为File，打印时调用其toString方法将文件名称打印出来
+               | println(file)
+
+          //间接调用方式(不常用）
+          for (i <- 0 to filesHere.length - 1)
+          println(filesHere(i))
+          //如果不需要5出现，则用
+          for(i <- 1 until 5) println("Iteration"+i)
+
+          //在for循环结构中还可以加入if进行过滤操作
+          //单个if
+          for (file <- filesHere if file.getName.endsWith(".scala"))
+          println(file)
+          //还可以加入多个过滤条件，用;隔开
+          for (
+          file <- filesHere
+          if file.isFile;
+          if file.getName.endsWith(".scala")
+          ) println(file)
+
+          //多重循环的实现
+          def grep(pattern: String) =
+          for (
+          file <- filesHere
+          if file.getName.endsWith(".scala")
+          )
+          for(
+          line <- fileLines(file)
+          if line.trim.matches(pattern)
+          )
+          println(file +": "+ line.trim)
+          grep(".*gcd.*")
+
+
+          //每次循环将结果保留，当整个循环执行完毕，所有保留的值将会生成一个集合并返回
+          def scalaFiles =
+               | for {
+               | file <- filesHere
+               | if file.getName.endsWith(".scala")
+               | } yield file
+          scalaFiles: Array[java.io.File]
+
