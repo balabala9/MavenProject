@@ -1,0 +1,40 @@
+1.scala简介
+ 一种能够运行于JVM和.Net平台之上的通用编程语言
+2.scala语言特点
+ 纯面向对象编程语言
+ 函数式编程语言
+     函数式编程语言特点
+         （1）高阶函数（Higher-order functions）
+         （2）闭包（ closures）
+         （3）模式匹配（ Pattern matching）
+         （4）单一赋值（ Single assignment ）
+         （5）延迟计算（ Lazy evaluation）
+         （6）类型推导（ Type inference ）
+         （7）尾部调用优化（ Tail call optimization）
+         （8）类型推导（ Type inference
+
+3.scala语言初步
+  变量
+    分类
+       val常量变量：与java final关键字声明的变量一样，一旦被赋值，便不能更改
+       var可变变量
+    定义
+        val helloString="Hello World" //Scala会帮我们进行类型推断
+        val helloString:String="Hello World" //进行类型指定
+
+
+    延迟加载变量
+     定义
+      lazy val helloString="Hello Crazy World"
+     原理
+      lazy声明的变量不会马上赋值，而是在真正使用时赋值
+  函数
+    定义
+     def(关键字) max(函数名) (x:Int,y:Int):Int(返回类型)={
+     函数题
+     }
+
+    函数返回值
+      省去返回值类型，scala会自动进行类型推断
+      使用return返回结果
+      可以省去return，scala会将最后一个执行语句 作为函数的返回值
