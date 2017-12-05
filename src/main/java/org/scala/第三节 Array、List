@@ -1,0 +1,164 @@
+数组
+  分类
+     定长数组 Array
+     变长数组 ArrayBuffer
+     多维数组
+  定义
+     定长数组定义
+       val numberArray=new Array[类型](10)
+       val strArray2=Array("First","Second")//调用其apply方法进行数组创建操作
+     定长数组赋值
+       strArray(0)="First Element"
+     变长数组定义
+       val strArrayVar=ArrayBuffer[String]()//要使用ArrayBuffer，先要引入scala.collection.mutable.ArrayBuffer import scala.collection.mutable.ArrayBuffer
+       var intArrayVar=ArrayBuffer(1,1,2)
+     变长数组赋值
+       strArrayVar+="Hello" //+=意思是在尾部添加元素  //res63: strArrayVar.type = ArrayBuffer(Hello)
+       strArrayVar+=("World","Programmer") //+=后面还可以跟多个元素的集合
+       strArrayVar++=Array("Wllcome","To","XueTuWuYou") ++=用于向数组中追加内容，++=右侧可以是任何集合
+     变长数组操作
+       strArrayVar.trimEnd(3) //删除末尾n个元素
+       intArrayVar.insert(0,6) //在数组索引为0的位置插入元素6
+       intArrayVar.insert(0,7,8,9) //在数组索引为0的位置插入元素7,8,9
+       intArrayVar.remove(0,4) //从索引0开始，删除4个元素
+       intArrayVar.toArray //转成定长数组
+       res78.toBuffer  //将定长数组转成ArrayBuffer
+     数组遍历
+         //to
+         for(i <- 0 to intArrayVar.length-1) println("Array Element: " +intArrayVar(i))
+         //until
+         for(i <- 0 until intArrayVar.length) println("Array Element: " +intArrayVar(i))
+         //数组方式（推荐使用）
+         for(i <- intArrayVar) println("Array Element: " + i)
+         //步长为2
+         for(i <- 0 until (intArrayVar.length,2)) println("Array Element: " +intArrayVar(i))
+         //倒序输出
+         for( i<- (0 until intArrayVar.length).reverse) println("Array Element: "+intArrayVar(i))
+     数组转换
+         var intArrayVar2=for(i <- intArrayVar) yield i*2 生成新的数组，原数组不变 缓冲数据转换后产生的仍然是缓冲数组
+     数组操作中的常用算法
+         intArr.sum //求和
+         intArr.max //求最大值
+         intArr.min //求最小值
+         intArr.toString() toString()方法
+         intArr.mkString(",") mkString()方法
+
+     多维数组定义
+         var multiDimArr=Array(Array(1,2,3),Array(2,3,4))//定义2行3列数组
+     多维数组遍历
+         for(i <- multiDimArr) println( i.mkString(","))
+list（List一但创建，其值不能被改变）
+     list定义
+         val fruit=List("Apple","Banana","Orange")
+         val fruit=List.apply("Apple","Banana","Orange")
+         var listStr=List() //空的List，其类型为Nothing,Nothing在Scala的继承层次中的最低层 //即Nothing是任何Scala其它类型如String,Object等的子类
+         var listStr:List[String]=List()
+         val diagMatrix=List(List(1,0,0),List(0,1,0),List(0,0,1)) 多重List，List的子元素为List
+     list遍历
+         for (i <- nums) println("List Element: "+i)
+     List常用构造方法
+         val nums = 1 :: (2 :: (3 :: (4 :: Nil)))  //采用::及Nil进行列表构建
+         val nums=1::2::3::4::Nil  由于::操作符的优先级是从右往左的，因此上一条语句等同于下面这条语句
+     List常用操作
+         //判断是否为空
+         nums.isEmpty
+
+         //取第一个无素
+         nums.head
+
+         取除第一个元素外剩余的元素，返回的是列表
+         nums.tail
+
+         /取列表第二个元素
+         nums.tail.head
+
+         //插入排序算法实现
+         def isort(xs: List[Int]): List[Int] =
+         if (xs.isEmpty) Nil
+         else insert(xs.head, isort(xs.tail))
+
+         def insert(x: Int, xs: List[Int]): List[Int] =
+         if (xs.isEmpty || x <= xs.head) x :: xs
+         else xs.head :: insert(x, xs.tail)
+
+         //List连接操作
+         List(1,2,3):::List(4,5,6)
+
+         //取除最后一个元素外的元素，返回的是列表
+         nums.init
+
+         //取列表最后一个元素
+         nums.last
+
+         //列表元素倒置
+         nums.reverse
+
+         //丢弃前n个元素
+         nums drop 3
+
+         //获取前n个元素
+         nums take 1
+
+         //将列表进行分割
+         nums.splitAt(2)
+
+         //Zip操作
+         scala> val nums=List(1,2,3,4)
+         nums: List[Int] = List(1, 2, 3, 4)
+
+         scala> val chars=List('1','2','3','4')
+         chars: List[Char] = List(1, 2, 3, 4)
+
+         //返回的是List类型的元组(Tuple）
+         scala> nums zip chars
+         res130: List[(Int, Char)] = List((1,1), (2,2), (3,3), (4,4))
+
+         //List toString方法
+
+         //List mkString方法
+
+         //转换成数组
+
+     List伴生对象方法
+         //apply方法
+         List.apply(1, 2, 3)
+
+         //range方法，构建某一值范围内的List
+         List.range(2, 6)  //List[Int] = List(2, 3, 4, 5)
+
+         //步长为2
+         List.range(2, 6,2)
+
+         //构建相同元素的List
+         List.make(5, "hey")
+
+         //unzip方法
+         List.unzip(res145)  //(List[Int], List[Char]) = (List(1, 2, 3, 4),List(1, 2, 3, 4))
+
+
+         //list.flatten，将列表平滑成第一个无素
+         scala> val xss =
+              | List(List('a', 'b'), List('c'), List('d', 'e'))
+         xss: List[List[Char]] = List(List(a, b), List(c), List(d, e))
+         scala> xss.flatten
+         res147: List[Char] = List(a, b, c, d, e)
+
+
+         //列表连接
+         scala> List.concat(List('a', 'b'), List('c'))
+         res148: List[Char] = List(a
+         , b, c)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
