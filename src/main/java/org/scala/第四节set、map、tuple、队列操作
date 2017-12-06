@@ -1,0 +1,113 @@
+集合都来自于scala.collection包及其子包mutable（易变）, immutable（不可改变的）。在scala中，默认使用的都是immutable集合，如果要使用mutable集合，需要在程序中引入import scala.collection.mutable
+
+
+set
+   set分类
+     Set(元素无序)
+     LinkedHashSet(元素有序)
+   set定义
+     val numsSet=Set(3.0,5)
+   set操作
+     //添加元素
+     numsSet+6(原集合元素个数不变，产生一个新集合)
+
+     //遍历
+     for(x<-numsSet) println(x)
+
+Map
+   定义
+      val studentInfo=Map("john" -> 21, "stephen" -> 22,"lucy" -> 20) //不可变
+      val xMap=scala.collection.mutable.Map(("spark",1),("hive",1)) //初始化Map，也可以通过 ("spark",1)这种方式实现(元组的形式）
+      val studentInfoMutable=scala.collection.mutable.Map("john" -> 21, "stephen" -> 22,"lucy" -> 20) //可变
+      val xMap=new scala.collection.mutable.HashMap[String,Int]() //定义一个空的Map
+   操作
+      //获取map元素
+      map.get("key")
+
+      注意：None、Some是Option的子类，它主要解决值为null的问题
+           scala> xMap.get("spark")
+           res19: Option[Int] = Some(1)
+
+           //通过模式匹配得到最终的结果
+           scala> def show(x:Option[Int]) =x match{
+           | case Some(s) => s
+           | case None => “????”
+           | }
+           show: (x: Option[Int])Any
+
+           scala> show(xMap.get(“spark”))
+           res21: Any = 1
+
+           scala> show(xMap.get(“sparkSQL”))
+           res22: Any = ????
+
+
+
+
+     //遍历map元素
+     for(x<-map)println(x)
+     (john,21)
+     (lucy,20)
+     (stephen,22)
+
+     map.foreach(e=> val (k,v)=e; println(k+":"+v))
+     john:21
+     lucy:20
+     stephen:22
+
+
+     map.foreach(e=> println(e._1+":"+e._2))
+     john:21
+     lucy:20
+     stephen:22
+
+
+     //判断是否包含key="key1"字符串
+     map.contains("key1")
+
+
+
+      <------------------针对可变map-------------------------->
+      //添加
+      map.put("k","v")
+
+      //清空内容
+      map.clear()
+
+元组
+    定义
+       var tuple=("Hello","China",1)  //tuple: (String, String, Int) = (Hello,China,1)
+    操作
+      //获取元组内容
+      tuple._序号
+      val (first,second,third)=tuple//通过模式匹配获取元组内容
+
+队列
+    定义
+      var queue=scala.collection.immutable.Queue(1,2,3) //immutable queue 不可变队列入队出队 queue不变
+      var queue=scala.collection.mutable.Queue(1,2,3,4,5) ////mutable queue
+
+    操作
+      //入队
+      queue.enqueue(4)
+      queue += 5
+      queue ++= List(6,7,8) //集合方式
+
+      //出队
+      queue.dequeue
+
+栈
+    定义
+      val stack = new Stack[Int]  //import scala.collection.mutable.Stack
+      val stack1=Stack(1,2,3) //Apply创建方式
+
+    操作
+      //入栈
+      stack.push(value)
+
+      //出栈
+      stack.top
+
+
+
+

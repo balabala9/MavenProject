@@ -6,6 +6,9 @@ scala基本类型
            Short -32768 ~ 32767
            Int -2^31-1~2^31  （21 亿）
            Long 64 位
+   特殊类型
+       Option、None、Some
+           None、Some是Option的子类，它主要解决值为null的问题
 
    基本类型定义
        整数类型变量
