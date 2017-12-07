@@ -1,0 +1,69 @@
+函数一般形式
+    def(关键字) max(函数名) (x:Int,y:Int):Int(返回类型)={
+        函数题
+        }
+函数分类
+    函数字面量（值函数）
+    匿名函数
+函数字面量
+    概念
+       指的是函数可以赋值给变量
+    定义形式
+       def increase(x:Int)=x+1<-----等同----->val increase=(x:Int)=>x+1 =>左侧的表示输入，右侧表示转换操作
+
+       //多个语句则使用{}
+       val increase2=(x:Int)=>{
+              println("Xue")
+              println("Tu")
+              println("Wu")
+              println("You")
+              x+1
+        }
+    调用形式
+       increase(2)
+
+       //数组的map方法中调用
+        println(Array(1,2,3,4).map(increase).mkString(","))
+    函数简化形式
+        val fun1=1+(_:Double)
+        val fun2:(Double)=>Double=1+_
+
+匿名函数
+    定义形式
+        (x:Int)=>x+1
+    调用形式
+        //数组的map方法中调用
+        println(Array(1,2,3,4).map((x:Int)=>x+1).mkString(","))
+    函数简化形式
+        //花括方式
+        Array(1,2,3,4).map{(x:Int)=>x+1}.mkString(",")
+
+        //省略.的方式
+        Array(1,2,3,4) map{(x:Int)=>x+1} mkString(",")
+
+        //参数类型推断写法
+        Array(1,2,3,4) map{(x)=>x+1} mkString(",")
+
+        //函数只有一个参数的话，可以省略()
+        Array(1,2,3,4) map{x=>x+1} mkString(",")
+
+        //如果参数右边只出现一次，则可以进一步简化
+        Array(1,2,3,4) map{_+1} mkString(",")
+函数参数
+   //int转String
+   //((Int)=>String)=>String
+   def convertIntToString(f:(Int)=>String)=f(4)
+   convertIntToString((x:Int)=>x+" s")
+
+   //(Double)=>((Double)=>Double)
+   def multiplyBy(factor:Double)=(x:Double)=>factor*x
+   val x=multiplyBy(10)
+函数闭包
+   自由变量：(x:Int)=>x+more,这里面的more是一个自由变量（Free Variable）,more是一个没有给定含义的不定变量
+   绑定变量：x则的类型确定、值在函数调用的时候被赋值
+   闭包：运行时确定不定变量的类型及值的函数称为闭包
+
+
+
+
+
