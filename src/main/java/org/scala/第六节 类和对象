@@ -1,0 +1,134 @@
+类和对象
+  类定义
+     //采用关键字class定义
+     class Person {
+       //类成员必须初始化，否则会报错
+       //这里定义的是一个公有成员，scala默认生成getter\setter方法,注意定义的是公有成员,但生成的字节码中却是以私有的方式实现的，生成的getter、setter方法是公有的
+       //类成员变量是val类型变量只会生成getter()方法
+       var name:String=null
+       //定义私有成员,其getter、setter方法也是私有的.需要直接能访问的是我们自己定义的getter、setter方法
+       private var privateName:String=null;
+       //定义为private[this]，则不会生成getter、setter方法
+       private[this] var name:String="john"
+       //@BeanProperty用于生成getXxx,setXxx方法
+       @BeanProperty var name:String="john"
+     }
+  对象
+    定义
+      //默认已经有构建函数，所以可以直接new
+      val p=new Person()
+  方法
+    getter和setter方法定义
+      //setter方法
+      def name=privateName
+      //getter方法
+      def name_=(name:String){
+      this.privateName=name
+      }
+    getter和setter方法使用
+      //setter方法
+      p.name_=("dd")
+      p.name="dd"
+      //getter方法
+      p.name
+
+   主构造器
+     定义
+        //构造器参数直接放在类名称（当在创建对象时，需要进行相关初始化操作时，可以将初始化语句放在类体中，同样也可以在类中添加或重写相关方法）
+        //当主构造器的参数不用var或val修饰的时候，参数会生成类的私有val成员，并且不会产生getter和setter方法
+        class Person(val name:String,val age:Int){
+        }
+        class Person(private[this] val name:String,private[this] val age:Int){
+        }
+        //默认参数的主构建器
+        class Person(val name:String="",val age:Int=18){
+        }
+        //主构造器中的参数加访问控制符（默认参数的主构建器，参数带访问控制符号）
+        //age变成私有成员，其getter方法是私有的，外部不能访问
+        class Person(val name:String="",private val age:Int=18){
+        }
+        //类名后面紧跟private关键字可以将主构建器设为私有，不允许外部使用
+        class Person private(var name:String,var age:Int){
+        }
+   辅助构造函数
+        特点
+        （1）辅助构建器的名称为this，java中的辅助构造函数与类名相同，这常常会导致修改类名时出现不少问题，scala语言避免了这样的问题；
+        （2）调用辅助构造函数时，必须先调用主构造函数或其它已经定义好的构造函数。
+        定义（需要注意构造函数的顺序）
+         def this(name:String){
+             this()
+             this.name=name
+           }
+   单例对象 --解决不支持静态成员
+        定义
+          object Student {
+            private var studentNo:Int=0;
+            def uniqueStudentNo()={
+              studentNo+=1
+              studentNo
+            }
+           }
+
+         使用
+           Student.uniqueStudentNo()
+
+
+   伴生对象与伴生类
+        定义（object Student被称为class Student的伴生对象，而class Student被称为object Student的伴生类）
+          class Student(var name:String,age:Int)
+
+          object Student {
+            private var studentNo:Int=0;
+            def uniqueStudentNo()={
+              studentNo+=1
+              studentNo
+            }
+          }
+  apply方法------------利用apply方法可以直接利用类名创建对象
+        定义
+           class Student(var name:String,var age:Int){
+             private var sex:Int=0
+             //直接访问伴生对象的私有成员
+             def printCompanionObject()=println(Student.studentNo)
+
+           }
+
+           //伴生对象
+           object Student {
+             private var studentNo:Int=0;
+             def uniqueStudentNo()={
+               studentNo+=1
+               studentNo
+             }
+             //定义自己的apply方法
+             def apply(name:String,age:Int)=new Student(name,age)
+            }
+  抽象类
+        定义
+          abstract class Animal {
+            //抽象字段(域）
+            //前面我们提到，一般类中定义字段的话必须初始化，而抽象类中则没有这要求
+            var height:Int
+            //抽象方法
+            def eat:Unit
+          }
+
+          //Person继承Animal，对eat方法进行了实现
+          //通过主构造器对height参数进行了初始化
+          class Person(var height:Int) extends Animal{
+            //对父类中的方法进行实现，注意这里面可以不加override关键字
+            def eat()={
+              println("eat by mouth")
+            }
+
+          }
+
+          //通过扩展App创建程序的入口
+          object Person extends App{
+            new Person(10).eat()
+          }
+
+
+
+
+
