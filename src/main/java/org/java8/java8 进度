@@ -1,0 +1,9 @@
+1. lambda 替换匿名类
+2. lambda 迭代列表
+3. lambda 表达式和Predicate函数式接口
+4. lambda map 将对象进行转换
+5. lambda 方法引用
+6. lambda 静态方法引用和特定实例对象的引用
+7. lambda 构造方法引用
+8. lambda 数组构造方法引用
+9. lambda 类型上的实例方法引用 ClassName::methodName
