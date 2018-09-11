@@ -1,12 +1,13 @@
 package org.date;
 
-import org.DateCommonst;
+import com.alibaba.fastjson.JSON;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.Callable;
+import java.util.List;
 
 public class DateUtil {
 
@@ -111,20 +112,133 @@ public class DateUtil {
 
     }
 
+    //获取指定月份的第一天 beforFormat 任意　　 afterFormat 任意
+    public static String firstDateOfMonth(String dateTime, String beforFormat, String afterFormat) {
+
+        String firstDateOfMonth = null;
+        try {
+            SimpleDateFormat beforSdf = new SimpleDateFormat(beforFormat);
+            Date date = beforSdf.parse(dateTime);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+
+            SimpleDateFormat afterSdf = new SimpleDateFormat(afterFormat);
+            firstDateOfMonth = afterSdf.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return firstDateOfMonth;
+    }
+
+    //获取指定月份的第一天 beforFormat 任意　　 afterFormat 任意
+    public static String endDateOfMonth(String dateTime, String beforFormat, String afterFormat) {
+
+        String endDateOfMonth = null;
+        try {
+            SimpleDateFormat beforSdf = new SimpleDateFormat(beforFormat);
+            Date date = beforSdf.parse(dateTime);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+            SimpleDateFormat afterSdf = new SimpleDateFormat(afterFormat);
+            endDateOfMonth = afterSdf.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return endDateOfMonth;
+    }
+
+    //    获取指定月份的所有日期 dateFormat yyyy-MM
+    public static List<String> datesOfMonthForDate(String dateTime, String beforeDateFormat, String afterDateFormat) {
+        List<String> list = new ArrayList<>();
+        try {
+            SimpleDateFormat beforeSdf = new SimpleDateFormat(beforeDateFormat);
+            Date date = beforeSdf.parse(dateTime);
+
+            SimpleDateFormat afterSdf = new SimpleDateFormat(afterDateFormat);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+
+            int days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int day = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+
+            for (int i = day; i <= days; i++) {
+                Date curDate = calendar.getTime();
+                String strCurDate = afterSdf.format(curDate);
+                list.add(strCurDate);
+
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    //获取指定时间段的的所有日期　dateFormat yyyy-MM-dd
+    public static List<String> datesOfMonthForPeriod(String startTime, String endTime, String dateFormat) {
+        List<String> list = new ArrayList<>();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+            Date startDate = sdf.parse(startTime);
+            Date endDate = sdf.parse(endTime);
+            Calendar startCalendar = Calendar.getInstance();
+            Calendar endCalendar = Calendar.getInstance();
+            startCalendar.setTime(startDate);
+            endCalendar.setTime(endDate);
+            //获取endTime的时间
+            endCalendar.add(Calendar.DAY_OF_MONTH, 1);
+
+            System.out.println(startCalendar.before(endCalendar));
+            while (startCalendar.before(endCalendar)) {
+
+                Date curDate = startCalendar.getTime();
+                String strCurDate = sdf.format(curDate);
+                list.add(strCurDate);
+
+                startCalendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     public static void main(String[] args) throws ParseException {
 
-        System.out.println(DateUtil.currentDate(DateCommonst.DATEFORMATE1));
+//        System.out.println(DateUtil.currentDate(DateCommonst.DATEFORMATE1));
+//
+//        System.out.println(DateUtil.currentTimestamp());
+//
+//        System.out.println(DateUtil.dateTotimestampMsec("2017-09-08", DateCommonst.DATEFORMATE2));
+//
+//        System.out.println(DateUtil.dateTotimestampSecond("2017-09-08", DateCommonst.DATEFORMATE2));
+//
+//        System.out.println(DateUtil.timestampTodate("1508915798730", DateCommonst.DATEFORMATE1));
+//
+//        System.out.println(DateUtil.afterDate("2017-09-08", DateCommonst.DATEFORMATE2,2));
 
-        System.out.println(DateUtil.currentTimestamp());
 
-        System.out.println(DateUtil.dateTotimestampMsec("2017-09-08", DateCommonst.DATEFORMATE2));
+//        List<String> list=DateUtil.datesOfMonth("2017-08-01","2017-09-06","yyyy-MM-dd");
+//        System.out.println(JSON.toJSONString(list));
 
-        System.out.println(DateUtil.dateTotimestampSecond("2017-09-08", DateCommonst.DATEFORMATE2));
-
-        System.out.println(DateUtil.timestampTodate("1508915798730", DateCommonst.DATEFORMATE1));
-
-        System.out.println(DateUtil.afterDate("2017-09-08", DateCommonst.DATEFORMATE2,2));
+        List<String> dates = DateUtil.datesOfMonthForDate("2018-09", "yyyy-MM", "yyyy-MM-dd");
+        System.out.println(JSON.toJSONString(dates));
 
     }
 }
