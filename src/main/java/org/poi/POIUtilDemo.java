@@ -1,6 +1,7 @@
 package org.poi;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
 
 import java.io.*;
@@ -78,6 +79,10 @@ public class POIUtilDemo {
                     //获取单元格
                     HSSFCell headhssfcell = hssfSheet.getRow(0).getCell(col);
                     HSSFCell hssfCell = hssfSheet.getRow(row).getCell(col);
+
+                    if(hssfCell==null){
+                        continue;
+                    }
 
                     String headcelValue = headhssfcell.getStringCellValue();
                     Object cellValue = POIUtilDemo.getCellValueByType(hssfCell);
@@ -255,6 +260,10 @@ public class POIUtilDemo {
 
                             }
 
+                            if(type.equals(CellTypeEnum.DOUBLE.type)){
+                                data=String.valueOf((int) (Double.valueOf(data)*100));
+                            }
+
                             hssfCell.setCellValue(data);
                         }
                     }
@@ -270,17 +279,20 @@ public class POIUtilDemo {
     }
 
     public static void main(String[] args) throws Exception {
-        String filepath = "/home/li/桌面/工作计划-客服.xls";
-        String filepath2 = "/home/li/桌面/阿卫利-阶段性工作+.xls";
+        String filepath = "C:\\Users\\Administrator\\Documents\\工作任务模板-- - 副本.xls";
+        String filepath2 = "C:\\Users\\Administrator\\Documents\\测试_工作任务 - 副本.xls";
         Map<String, Object> map = POIUtilDemo.readPoi(filepath);
 
+        System.out.println(JSONObject.toJSONString(map));
+
         Map<String, String> oldToNewIndex = new HashMap<>();
-        oldToNewIndex.put("2", "3");
-        oldToNewIndex.put("3", "5");
+        oldToNewIndex.put("2", "2");
+        oldToNewIndex.put("3", "3");
         oldToNewIndex.put("4", "4");
+        oldToNewIndex.put("5", "5");
 
         Map<String, String> filterMap = new HashMap<>();
-        filterMap.put("0", "日常工作");
+//        filterMap.put("0", "日常工作");
         System.out.println(JSON.toJSONString(map));
         POIUtilDemo.writeExcel(oldToNewIndex, map, filepath2, filterMap);
 
