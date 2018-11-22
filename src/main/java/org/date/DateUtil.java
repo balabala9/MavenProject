@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DateUtil {
 
@@ -216,6 +217,32 @@ public class DateUtil {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public static Date strToDate(String date, String dateFormat) {
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        Date result = null;
+        try {
+            result = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static List<String> getDates(List<String> dates, String dateFormat) {
+        List<String> list = dates.stream().map(x -> getDate(x, dateFormat)).collect(Collectors.toList());
+        return list;
+    }
+
+    //根据日期获取日
+    public static String getDate(String date, String dateFormat) {
+        Date date1 = strToDate(date, dateFormat);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        int days = calendar.get(Calendar.DAY_OF_MONTH);
+
+        return String.valueOf(days);
     }
 
 
