@@ -1,4 +1,4 @@
-package org.date;
+package org.java.date;
 
 import com.alibaba.fastjson.JSON;
 
