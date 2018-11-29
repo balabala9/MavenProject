@@ -69,6 +69,33 @@ public class StringBase {
         /**
          *
          */
+
+        String test = "2017-09-30 00:00:00";
+        System.out.println(test.substring(0, 10));
+
+        /**
+         * ==
+         */
+        String a = "1";
+        String b = "1";
+        String f = new String("1");
+        StringBean stringBean = new StringBean();
+        stringBean.setV("1");
+
+        StringBean stringBean1 = new StringBean();
+        stringBean1.setV(String.valueOf(1));
+        boolean c = a.equals(b);
+        boolean d = a == b;
+        boolean g = a == f;
+
+        boolean h = stringBean.getV() == "1";
+
+        boolean i = stringBean1.getV() == "1";
+        System.out.println("a.equals(b) " + c);
+        System.out.println("a==b " + d);
+        System.out.println("a==f " + g);
+        System.out.println("stringBean.getV() == \"1\" " + h);
+        System.out.println("stringBean1.getV() ==\"1\"" + i);
     }
 
     private static void iAmStaticMethod(){
@@ -77,8 +104,6 @@ public class StringBase {
     private void iAmNonStaticMethod(){
         System.out.println("I am NON static method, don't date to call me by null");
     }
-
-
 
 
 }
