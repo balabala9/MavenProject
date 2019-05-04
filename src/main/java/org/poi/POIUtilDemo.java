@@ -80,13 +80,12 @@ public class POIUtilDemo {
                     HSSFCell headhssfcell = hssfSheet.getRow(0).getCell(col);
                     HSSFCell hssfCell = hssfSheet.getRow(row).getCell(col);
 
-                    if(hssfCell==null){
+                    if (hssfCell == null) {
                         continue;
                     }
 
                     String headcelValue = headhssfcell.getStringCellValue();
                     Object cellValue = POIUtilDemo.getCellValueByType(hssfCell);
-
                     rowcolMap.put(headcelValue, cellValue);
 
                     if (!colNameToIndexMap.containsKey(String.valueOf(col))) {
@@ -132,6 +131,12 @@ public class POIUtilDemo {
                     //Date 日期类型
                     cellValue = hssfCell.getDateCellValue();
                     cellType = CellTypeEnum.DATE.type;
+                } else if (hssfCell.getCellStyle().getDataFormat() == 58) {
+                    //自定义日期格式
+                    cellType = CellTypeEnum.DATE.type;
+                    cellValue = hssfCell.getNumericCellValue();
+                    cellValue = org.apache.poi.ss.usermodel.DateUtil
+                            .getJavaDate((Double) cellValue);
                 } else {
                     // double
                     cellValue = hssfCell.getNumericCellValue();
@@ -195,25 +200,29 @@ public class POIUtilDemo {
      */
     public static void writeExcel(Map<String, String> oldColToNewColMap, Map<String, Object> map, String filePath, Map<String, String> filtermap) throws Exception {
 
-        File file = new File(filePath);
-
-        if (!file.exists()) {
-            throw new Exception("此文件不存在");
-        }
-        InputStream fileInputStream = new FileInputStream(file);
-        //excel工作簿对象
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(fileInputStream);
-        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(0);
-        int indexRow = hssfSheet.getLastRowNum() + 1;
-
-        OutputStream outputStream = new FileOutputStream(file);
+        String filename = (String) map.get("fileName");
         List<Map<String, Object>> list = (List<Map<String, Object>>) map.get(POIUtilDemo.FILEDATE);
 
         for (Map<String, Object> fileDateMap : list) {
             Map<String, String> colNameToIndexMap = (Map<String, String>) fileDateMap.get(POIUtilDemo.COLNAMETOINDEX);
             Map<String, String> colIndexToNameMap = (Map<String, String>) fileDateMap.get(POIUtilDemo.COLINDEXTONAME);
             List<Map<String, Object>> rowsDataList = (List<Map<String, Object>>) fileDateMap.get(POIUtilDemo.ROWSDATA);
+            //根据文件名追加
+            String sheetName = (String) fileDateMap.get(POIUtilDemo.SHEETNAME);
 
+            File file = new File(filePath + sheetName + ".xls");
+
+            if (!file.exists()) {
+                throw new Exception("此文件不存在");
+            }
+            InputStream fileInputStream = new FileInputStream(file);
+            //excel工作簿对象
+            HSSFWorkbook hssfWorkbook = new HSSFWorkbook(fileInputStream);
+            HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(0);
+            int indexRow = hssfSheet.getLastRowNum() + 1;
+
+            OutputStream outputStream = new FileOutputStream(file);
+            //
 
             for (Map<String, Object> row : rowsDataList) {
 
@@ -260,42 +269,179 @@ public class POIUtilDemo {
 
                             }
 
-                            if(type.equals(CellTypeEnum.DOUBLE.type)){
-                                data=String.valueOf((int) (Double.valueOf(data)*100));
+                            if (type.equals(CellTypeEnum.DOUBLE.type)) {
+                                int tmp = (int) (Double.valueOf(data) * 100);
+                                hssfCell.setCellValue(tmp);
+                                continue;
                             }
 
                             hssfCell.setCellValue(data);
                         }
+                    } else if (oldColToNewColMap.containsKey("fileName")) {
+                        String[] filenameTmp = filename.split("-");
+                        String filenameTmp2 = filenameTmp[1];
+                        int index = filenameTmp2.indexOf(".");
+                        String name = filenameTmp2.substring(0, index);
+                        String newIndex = oldColToNewColMap.get("fileName");
+                        HSSFCell hssfCell = hssfRow.createCell(Short.parseShort(newIndex));
+                        hssfCell.setCellValue(name);
+                    }
+                }
+                indexRow++;
+            }
+
+            hssfWorkbook.write(outputStream);
+            outputStream.close();
+        }
+
+    }
+
+
+    public static void writeExcelByFileName(Map<String, String> oldColToNewColMap, Map<String, Object> map, String filePath, Map<String, String> filtermap) throws Exception {
+
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            throw new Exception("此文件不存在");
+        }
+        InputStream fileInputStream = new FileInputStream(file);
+        //excel工作簿对象
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(fileInputStream);
+        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(0);
+        int indexRow = hssfSheet.getLastRowNum() + 1;
+
+        OutputStream outputStream = new FileOutputStream(file);
+        String filename = (String) map.get("fileName");
+        List<Map<String, Object>> list = (List<Map<String, Object>>) map.get(POIUtilDemo.FILEDATE);
+
+        for (Map<String, Object> fileDateMap : list) {
+            Map<String, String> colNameToIndexMap = (Map<String, String>) fileDateMap.get(POIUtilDemo.COLNAMETOINDEX);
+            Map<String, String> colIndexToNameMap = (Map<String, String>) fileDateMap.get(POIUtilDemo.COLINDEXTONAME);
+            List<Map<String, Object>> rowsDataList = (List<Map<String, Object>>) fileDateMap.get(POIUtilDemo.ROWSDATA);
+
+            for (Map<String, Object> row : rowsDataList) {
+
+                boolean filterFlag = false;
+
+                if (!(colIndexToNameMap.keySet().isEmpty())) {
+                    Set<String> oldSet = colIndexToNameMap.keySet();
+                    Set<String> filterSet = filtermap.keySet();
+                    filterSet.retainAll(oldSet);
+
+                    if (!filterSet.isEmpty()) {
+                        for (String s : filterSet) {
+                            String colNameFilter = colIndexToNameMap.get(s);
+                            String colvalue = (String) ((Map<String, Object>) row.get(colNameFilter)).get(POIUtilDemo.CELLDATE);
+                            String filterColvalue = filtermap.get(s);
+                            if (!colvalue.equals(filterColvalue)) {
+                                filterFlag = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (filterFlag) continue;
+
+                HSSFRow hssfRow = hssfSheet.createRow(indexRow);
+                //遍历行
+                for (Map.Entry<String, Object> col : row.entrySet()) {
+                    String colName = col.getKey();
+                    String colNameIndex = colNameToIndexMap.get(colName);
+
+                    if (oldColToNewColMap.containsKey(colNameIndex)) {
+                        Map<String, String> cell = (Map<String, String>) col.getValue();
+                        String data = String.valueOf(cell.get(POIUtilDemo.CELLDATE));
+                        String type = cell.get(POIUtilDemo.CELLTYPE);
+
+                        if (!data.equals("")) {
+                            String newIndex = oldColToNewColMap.get(colNameIndex);
+                            HSSFCell hssfCell = hssfRow.createCell(Short.parseShort(newIndex));
+
+                            if (type.equals(CellTypeEnum.DATE.type)) {
+                                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                                data = sf.format(new Date(data));
+
+                            }
+
+                            if (type.equals(CellTypeEnum.DOUBLE.type)) {
+                                int tmp = (int) (Double.valueOf(data) * 100);
+                                hssfCell.setCellValue(tmp);
+                                continue;
+                            }
+
+                            hssfCell.setCellValue(data);
+                        }
+                    } else if (oldColToNewColMap.containsKey("fileName")) {
+                        String[] filenameTmp = filename.split("-");
+                        String filenameTmp2 = filenameTmp[1];
+                        int index = filenameTmp2.indexOf(".");
+                        String name = filenameTmp2.substring(0, index);
+                        String newIndex = oldColToNewColMap.get("fileName");
+                        HSSFCell hssfCell = hssfRow.createCell(Short.parseShort(newIndex));
+                        hssfCell.setCellValue(name);
                     }
                 }
                 indexRow++;
             }
 
         }
-
-
         hssfWorkbook.write(outputStream);
         outputStream.close();
     }
 
-    public static void main(String[] args) throws Exception {
-        String filepath = "C:\\Users\\Administrator\\Documents\\工作任务模板-- - 副本.xls";
-        String filepath2 = "C:\\Users\\Administrator\\Documents\\测试_工作任务 - 副本.xls";
+
+    public static void dealAllFile() throws Exception {
+        String path = "D:\\data\\桌面\\公司项目\\银信\\日常信息导入\\物流部\\物流部";
+        File file = new File(path);
+        String[] files = file.list();
+        for (String fileName : files) {
+
+            System.out.println(fileName);
+            String filepath = "D:\\data\\桌面\\公司项目\\银信\\日常信息导入\\物流部\\物流部\\" + fileName;
+            String filepath2 = "D:\\data\\桌面\\公司项目\\银信\\信息导入生成文件\\";
+            Map<String, Object> map = POIUtilDemo.readPoi(filepath);
+
+            System.out.println(JSONObject.toJSONString(map));
+
+            Map<String, String> oldToNewIndex = new HashMap<>();
+            oldToNewIndex.put("2", "3");
+            oldToNewIndex.put("3", "4");
+            oldToNewIndex.put("4", "5");
+            oldToNewIndex.put("fileName", "2");
+
+            Map<String, String> filterMap = new HashMap<>();
+//        filterMap.put("0", "日常工作");
+//        filterMap.put("0","阶段工作");
+            POIUtilDemo.writeExcel(oldToNewIndex, map, filepath2, filterMap);
+        }
+
+    }
+
+    public static void dealSingleFile() throws Exception {
+        String filepath = "C:\\Users\\Administrator\\Desktop\\公司项目\\银信\\日常信息导入\\2019工作任务(2)\\2019工作任务\\月度计划-姜寓中.xls";
+        String filepath2 = "C:\\Users\\Administrator\\Desktop\\公司项目\\银信\\信息导入生成文件\\月度计划-姜寓中.xls";
         Map<String, Object> map = POIUtilDemo.readPoi(filepath);
 
         System.out.println(JSONObject.toJSONString(map));
 
         Map<String, String> oldToNewIndex = new HashMap<>();
-        oldToNewIndex.put("2", "2");
-        oldToNewIndex.put("3", "3");
-        oldToNewIndex.put("4", "4");
-        oldToNewIndex.put("5", "5");
+        oldToNewIndex.put("2", "3");
+        oldToNewIndex.put("3", "4");
+        oldToNewIndex.put("4", "5");
+        oldToNewIndex.put("fileName", "2");
 
         Map<String, String> filterMap = new HashMap<>();
 //        filterMap.put("0", "日常工作");
+//        filterMap.put("0","阶段工作");
         System.out.println(JSON.toJSONString(map));
-        POIUtilDemo.writeExcel(oldToNewIndex, map, filepath2, filterMap);
+        POIUtilDemo.writeExcelByFileName(oldToNewIndex, map, filepath2, filterMap);
+    }
 
+
+    public static void main(String[] args) throws Exception {
+//        POIUtilDemo.dealSingleFile();
+        POIUtilDemo.dealAllFile();
     }
 
 

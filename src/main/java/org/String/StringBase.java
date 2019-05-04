@@ -4,6 +4,8 @@ public class StringBase {
 
 
     public static void main(String[] args) {
+        String var = "k=\"url\"";
+        System.out.println(var);
         //null 值
 
         /**
@@ -96,6 +98,14 @@ public class StringBase {
         System.out.println("a==f " + g);
         System.out.println("stringBean.getV() == \"1\" " + h);
         System.out.println("stringBean1.getV() ==\"1\"" + i);
+
+
+        String filename = "工作计划-邢杨.xls";
+        String[] filename1 = filename.split("-");
+        String filename2 = filename1[1];
+        int filename3 = filename2.indexOf(".");
+        String filename4 = filename2.substring(0, filename3);
+        System.out.println("2222222");
     }
 
     private static void iAmStaticMethod(){
