@@ -1,7 +1,6 @@
 package org.java.date;
 
-import com.alibaba.fastjson.JSON;
-
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -245,6 +244,28 @@ public class DateUtil {
         return String.valueOf(days);
     }
 
+    public static int compareDate(String date1, String date2, String format) {
+        DateFormat df = new SimpleDateFormat(format);
+        int result = 0;
+        try {
+            Date date_1 = df.parse(date1);
+            Date date_2 = df.parse(date2);
+
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTime(date_1);
+
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.setTime(date_2);
+
+            result = calendar1.compareTo(calendar2);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
 
     public static void main(String[] args) throws ParseException {
 
@@ -264,8 +285,16 @@ public class DateUtil {
 //        List<String> list=DateUtil.datesOfMonth("2017-08-01","2017-09-06","yyyy-MM-dd");
 //        System.out.println(JSON.toJSONString(list));
 
-        List<String> dates = DateUtil.datesOfMonthForDate("2018-09", "yyyy-MM", "yyyy-MM-dd");
-        System.out.println(JSON.toJSONString(dates));
+//        List<String> dates = DateUtil.datesOfMonthForDate("2018-09", "yyyy-MM", "yyyy-MM-dd");
+//        System.out.println(JSON.toJSONString(dates));
+
+        String date = "2019-01-21";
+        String currentDate = currentDate("yyyy-MM-dd");
+        System.out.println(compareDate(date, currentDate, "yyyy-MM-dd"));
+        if (compareDate(date, currentDate, "yyyy-MM-dd") == -1) {
+
+            System.out.println(true);
+        }
 
     }
 }
